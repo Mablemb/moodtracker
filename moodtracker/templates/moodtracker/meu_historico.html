@@ -1,0 +1,124 @@
+{% comment %} moodtracker/templates/moodtracker/meu_historico.html {% endcomment %}
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Histórico de Humores</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .registro-humor {
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .registro-humor h3 {
+            margin-top: 0;
+            color: #555;
+        }
+
+        .registro-humor p {
+            margin-bottom: 5px;
+        }
+
+        .registro-humor small {
+            color: #777;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .no-registros {
+            color: #777;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Meu Histórico de Humores</h1>
+
+        <a href="{% url 'moodtracker:registrar_humor' %}" class="btn">Registrar Novo Humor</a>
+
+        {% if registros %}
+        {% for registro in registros %}
+        <div class="registro-humor">
+            <h3>{{ registro.get_humor_display }}</h3>
+            <p><strong>Sentimento:</strong> {{ registro.sentimento_principal|default:"Nenhum" }}</p>
+            {% if registro.notas_adicionais %}
+            <p><strong>Notas:</strong> {{ registro.notas_adicionais }}</p>
+            {% endif %}
+            <small>Registrado em: {{ registro.data_registro|date:"d/m/Y H:i" }}</small>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="no-registros">Você ainda não tem nenhum humor registrado. Que tal <a
+                href="{% url 'moodtracker:registrar_humor' %}">adicionar um agora</a>?</p>
+        {% endif %}
+
+        <hr>
+        <p><a href="{% url 'admin:index' %}">Ir para o Admin</a></p>
+
+        <hr>
+        {% if user.is_authenticated %}
+        <p>Olá, {{ user.username }}!
+        <form method="post" action="{% url 'logout' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit"
+                style="background:none; border:none; padding:0; color:#007bff; text-decoration:underline; cursor:pointer;">Sair</button>
+        </form>
+        </p>
+        {% else %}
+        <p><a href="{% url 'login' %}">Entrar</a></p>
+        {% endif %}
+        <p><a href="{% url 'admin:index' %}">Ir para o Admin</a></p>
+
+    </div>
+</body>
+
+</html>
